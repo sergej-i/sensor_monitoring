@@ -1,0 +1,28 @@
+{
+    "monitoring_config":{
+        "sensors": [
+            {
+                "name": "sensor1",
+                "log_dbname": "sensors.sqlite",
+                "log_tablename": "sensor1_log",
+                "autoload": 1,
+                "autorestart": 1,
+                "run": [
+                    "python3",
+                    "sensor1.py"
+                ]
+            },
+            {
+                "name": "sensor2",
+                "log_dbname": "sensors.sqlite",
+                "log_tablename": "sensor2_log",
+                "autoload": 1,
+                "autorestart": 1,
+                "run": [
+                    "python3",
+                    "sensor2.py"
+                ]
+            }
+        ]
+    }
+}

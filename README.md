@@ -5,8 +5,10 @@ sensor_monitoring
 Some project.
 
 **Tested on**:
+```
 python 3.8
 Kubuntu 20LTS
+```
 
 **install**:
 ```
@@ -17,10 +19,14 @@ pip install git+git://github.com/sergej-i/sensor_monitoring
 ```
 
 **Run**:
+```
 sensor_monitor.py
+```
 
-**Config**
+**Config**:
+```
 <project_dir>/.env/bin/sensor_monitoring_config/monitoring.json
+```
 
 **Codestyle**:
 ```

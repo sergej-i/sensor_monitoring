@@ -24,7 +24,8 @@ setup(
     author='Sergey I',
     author_email='yourname@example.com',
     install_requires=[
-        'jsonschema==3.2.0'
+        'jsonschema==3.2.0',
+        'wheel'
     ],
     data_files=[
         (

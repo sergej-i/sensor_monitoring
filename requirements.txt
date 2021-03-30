@@ -1,4 +1,11 @@
+astroid==2.5.2
 attrs==20.3.0
+isort==5.8.0
 jsonschema==3.2.0
+lazy-object-proxy==1.6.0
+mccabe==0.6.1
+pylint==2.7.4
 pyrsistent==0.17.3
 six==1.15.0
+toml==0.10.2
+wrapt==1.12.1

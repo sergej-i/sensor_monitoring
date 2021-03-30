@@ -1,3 +1,5 @@
 include README.rst
 include requirements.txt
-recursive-include sensor_monitoring/docs *
+recursive-include docs *
+recursive-include sensor_monitoring *.py
+include . *.py *.json *.schema.json

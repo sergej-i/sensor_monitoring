@@ -13,8 +13,8 @@ class MonitoringConfig:
     @staticmethod
     def load():
         ''' считываем конфиг из json-файла '''
-        fname = 'monitoring.json'
-        sname = 'monitoring.schema.json'
+        fname = 'sensor_monitoring_config/monitoring.json'
+        sname = 'sensor_monitoring_config/monitoring.schema.json'
         loaded_config = None
         try:
             with open(fname, 'r') as f:

@@ -1,6 +1,7 @@
 ''' мониторинг процессов: слушаем датчики.
 процессы датчиков поднимаются автоматом, если они не были выключены пользователем '''
 
+import sys
 from subprocess import Popen
 from threading import Thread
 from time import sleep
@@ -9,29 +10,29 @@ from queue import Queue, Empty
 from lib.monitoring_config import SensorsConfig
 
 # команды позоляющие выйти из программы
-_exit_commands = ['exit', 'quit', 'q']
+_EXIT_COMMANDS = ['exit', 'quit', 'q']
 
-def user_input_check():
+def user_input_check(commands_queue):
     ''' ввёл ли пользователь команду? какую? '''
     user_input = ''
     try:
-        user_input = q.get(block=False)
+        user_input = commands_queue.get(block=False)
         print(f'command: {user_input}')
     except Empty:
         pass
     return user_input.strip()
 
-def user_input_get():
+def user_input_get(commands_queue):
     ''' для взятия комманд пользователя из параллельного потока '''
-    global q
-    global _exit_commands
+    # global q
+    # global _EXIT_COMMANDS
     data = ''
     print('Ожидаю комманд')
     print('-' * 20)
-    while data not in _exit_commands:
+    while data not in _EXIT_COMMANDS:
         data = input()
         print(f'command echo: {data}')
-        q.put(data)
+        commands_queue.put(data)
     return data
 
 def sensor_run_check(sensor):
@@ -46,10 +47,10 @@ if __name__ == '__main__':
     config = SensorsConfig()
 
     if not config.sensors:
-        exit(1)
+        sys.exit(1)
 
     # для ввода комманд пользователем
-    q = Queue()
+    commands_q = Queue()
 
     print('''
     Доступны комманды:\n
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     ''')
 
     # поток для ожидания комманд пользователя
-    input_thread = Thread(target=user_input_get)
+    input_thread = Thread(target=user_input_get, args=(commands_q,))
     input_thread.start()
 
     # процессы читающие данчики
@@ -79,32 +80,31 @@ if __name__ == '__main__':
     # слушаем датчики и команды пользователя
     while True:
         sleep(1)
-        user_input = user_input_check()
-        if user_input:
-            command = user_input.split()
+        user_input_ = user_input_check(commands_q)
+        if user_input_:
+            command = user_input_.split()
 
             # список датчиков
             if command[0] == 'list' or command[0] == 'l':
                 config.print_sensors()
 
             # выход из программы
-            elif command[0] in _exit_commands:
+            elif command[0] in _EXIT_COMMANDS:
                 for _, v in config.sensors_dict.items():
-                    pop = v['popen']
-                    if pop and pop.poll() is None:
-                        pop.terminate()
+                    if v['popen'] and v['popen'].poll() is None:
+                        v['popen'].terminate()
                 print('bye!')
                 break
 
-            # остановка атчика
+            # остановка датчика
             elif len(command) == 2 and command[0] == 'term' or command[0] == 't':
                 if command[1] in config.sensors_names:
                     sensor_term = config.sensors_dict[command[1]]
                     if not sensor_run_check(sensor_term):
                         print(f'Датчик {command[1]} уже не работает')
                     else:
-                        sensor_start['popen'].terminate()
-                        sensor_start['popen'].wait()
+                        sensor_term['popen'].terminate()
+                        sensor_term['popen'].wait()
                         print(f'Датчик {command[1]} остановлен')
                     sensor_term['up'] = False
                     sensor_term['off_by_user'] = True
@@ -125,16 +125,14 @@ if __name__ == '__main__':
             # лог датчика
             elif len(command) == 2 and command[0] == 'print' or command[0] == 'p':
                 if command[1] in config.sensors_names:
-                    [print(x) for x in config.sensor_log_short_get(command[1])]
-
+                    for i in config.sensor_log_short_get(command[1]):
+                        print(i)
             else:
                 print('неизвестная команда (для выхода наберите "q" или "quit")')
 
         for _, v in config.sensors_dict.items():
-            # if v['up']:
-            pop = v['popen']
-            if pop:
-                code = pop.poll()
+            if v['popen']:
+                code = v['popen'].poll()
                 if code is not None:
                     if v['up']:
                         print(f'Датчик {v["name"]} не работает, code={code}')

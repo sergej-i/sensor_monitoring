@@ -1,0 +1,72 @@
+{
+    "title": "Sensor Monitoring",
+    "description": "Some project",
+    "type": "object",
+    "definitions": {
+        "sensor_type": {
+            "description": "Sensor description",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "Sensor ID",
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 20
+                },
+                "log_dbname": {
+                    "description": "The name of the database for storing the log",
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 20
+                },
+                "log_tablename": {
+                    "description": "The name of the table for storing the log",
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 20
+                },
+                "autoload": {
+                    "description": "Starting a sensor polling at the start of monitoring",
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "autorestart": {
+                    "description": "Restarting the sensor polling at the start of monitoring if the program fails",
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "run": {
+                    "description": "Command line as an array",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                }
+            },
+            "required": ["name", "log_dbname", "log_tablename", "autoload", "autorestart", "run"]
+        }
+    },
+    "properties": {
+        "monitoring_config": {
+            "description": "Root",
+            "type": "object",
+            "properties": {
+                "sensors": { 
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sensor_type"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                }
+            },
+            "required": ["sensors"],
+            "additionalProperties": false
+        }
+    },
+    "required": ["monitoring_config"],
+    "additionalProperties": false
+}

@@ -3,6 +3,7 @@
 import json
 import sqlite3
 from lib.sqlite_sensor_logging import SQLiteSensorHandler
+from jsonschema import validate, ValidationError
 
 class SensorsConfig:
     ''' конфигуратор датчиков '''
@@ -12,13 +13,19 @@ class SensorsConfig:
     def load(self):
         ''' считываем конфиг из json-файла '''
         fname = 'monitoring.json'
+        sname = 'monitoring.schema.json'
         try:
             with open(fname, 'r') as f:
                 config = json.load(f)
-                return config
+            with open(sname, 'r') as f:
+                config_schema = json.load(f)
+            validate(instance=config, schema=config_schema)
+            return config
         except OSError as e:
             print("Нельзя открыть файл конфигурации (существует?, права доступа?):", fname)
         except json.JSONDecodeError as e:
+            print(SensorsConfig.config_err_msg, e)
+        except ValidationError as e:
             print(SensorsConfig.config_err_msg, e)
 
     def _sensors_get(self):

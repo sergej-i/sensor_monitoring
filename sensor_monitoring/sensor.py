@@ -2,7 +2,7 @@
 
 import logging
 import sqlite3
-from lib.sqlite_sensor_logging import SQLiteSensorHandler
+from .sqlite_sensor_logging import SQLiteSensorHandler
 
 # процесс чтения может попасть в "исключительную ситуацию"
 class SensorException(Exception):
@@ -20,7 +20,7 @@ class Sensor:
         self.log.addHandler(sqlite_handler)
         self.log.setLevel('DEBUG')  # TODO config
 
-    def get_val(self):
+    def get_val(self, debug_mode=False):
         ''' чтение значения сенсора '''
         raise NotImplementedError
 

@@ -2,31 +2,35 @@
 
 import json
 import sqlite3
-from lib.sqlite_sensor_logging import SQLiteSensorHandler
 from jsonschema import validate, ValidationError
+from .sqlite_sensor_logging import SQLiteSensorHandler
 
-class SensorsConfig:
+class MonitoringConfig:
     ''' конфигуратор датчиков '''
 
     config_err_msg = 'Ошибка в конфиг файле: '
 
-    def load(self):
+    @staticmethod
+    def load():
         ''' считываем конфиг из json-файла '''
         fname = 'monitoring.json'
         sname = 'monitoring.schema.json'
+        loaded_config = None
         try:
             with open(fname, 'r') as f:
-                config = json.load(f)
+                loaded_config = json.load(f)
             with open(sname, 'r') as f:
                 config_schema = json.load(f)
-            validate(instance=config, schema=config_schema)
-            return config
+            validate(instance=loaded_config, schema=config_schema)
+            # if validation is success only
+            return loaded_config
         except OSError as e:
             print("Нельзя открыть файл конфигурации (существует?, права доступа?):", fname)
         except json.JSONDecodeError as e:
-            print(SensorsConfig.config_err_msg, e)
+            print(MonitoringConfig.config_err_msg, e)
         except ValidationError as e:
-            print(SensorsConfig.config_err_msg, e)
+            print(MonitoringConfig.config_err_msg, e)
+        return None
 
     def _sensors_get(self):
         ''' прочитать раздел с сенсорами '''
@@ -35,9 +39,11 @@ class SensorsConfig:
             if isinstance(sensors, list):
                 return sensors
         except KeyError as e:
-            print(SensorsConfig.config_err_msg, 'KeyError', e)
+            print(MonitoringConfig.config_err_msg, 'KeyError', e)
+        return None
 
-    def _sensor_load(self, sensor_config_obj):
+    @staticmethod
+    def _sensor_load(sensor_config_obj):
         ''' взять конфигурацию сенсора '''
         sensor = {}
         sensor['name'] = sensor_config_obj['name']
@@ -54,7 +60,8 @@ class SensorsConfig:
             sensors = [self._sensor_load(s) for s in sensors_config_part]
             return sensors
         except KeyError as e:
-            print(SensorsConfig.config_err_msg, 'KeyError', e)
+            print(MonitoringConfig.config_err_msg, 'KeyError', e)
+        return None
 
     def __init__(self):
         self.config = self.load()
@@ -96,11 +103,12 @@ class SensorsConfig:
         indent = ' ' * 3
         if self.sensors:
             print(indent, 'В конфигурации описаны следующие датчики:\n')
-            [print(indent, sensor['name']) for sensor in self.sensors]
+            for sensor in self.sensors:
+                print(indent, sensor['name'])
 
 
 if __name__ == '__main__':
-    config = SensorsConfig()
+    config = MonitoringConfig()
     print(config.config)
     print(config.sensors_dict)
     

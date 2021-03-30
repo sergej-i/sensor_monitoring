@@ -1,9 +1,6 @@
 ''' Handler SQLite для logging '''
 
-import sqlite3
-import logging
-import time
-from lib.sqlite_logging import SQLiteHandler
+from .sqlite_logging import SQLiteHandler
 
 class SQLiteSensorHandler(SQLiteHandler):
     """ Handler SQLite для logging

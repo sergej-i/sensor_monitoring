@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "~/_CODE/repos/sensor_monitoring/.env/bin/python",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}

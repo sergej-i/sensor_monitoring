@@ -56,13 +56,12 @@ class SQLiteHandler(logging.Handler):
             params = self._fill_params(record)
             self.conn.execute(self._get_insert_sql(), params)
             self.conn.commit()
-        except Exception as e:
+        except sqlite3.Error:
             self.conn.rollback()
-            # print(e)
 
     def get_logrecord_def(self):
         ''' дефолтные значения это None '''
-        return {k:None for k in self._get_logrecord_attributes().keys()}
+        return {k:None for k in self._get_logrecord_attributes()}
 
     def _fill_params(self, record):
         ''' обработчик параметров лога - подготовка для вставки в таблицу,

@@ -1,5 +1,4 @@
-*
-=================
+
 sensor_monitoring
 =================
 
@@ -19,5 +18,5 @@ pip install git+git://github.com/sergej-i/sensor_monitoring
 
 **Codestyle**:
 ```
-pylint tasks.py
+pylint monitoring.py
 ```

@@ -15,9 +15,9 @@ class SensorsMonitor:
     # команды позоляющие выйти из программы
     _EXIT_COMMANDS = ['exit', 'quit', 'q']
 
-    def __init__(self):
+    def __init__(self, conf_path=''):
         # считываем конфигурацию
-        self.config = MonitoringConfig()
+        self.config = MonitoringConfig(conf_path)
         # ошибки в конфиге
         if not self.config.sensors:
             sys.exit(1)

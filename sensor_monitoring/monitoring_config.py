@@ -1,5 +1,6 @@
 ''' Считывание конфигурации о датчиках '''
 
+import os
 import json
 import sqlite3
 from jsonschema import validate, ValidationError
@@ -10,11 +11,10 @@ class MonitoringConfig:
 
     config_err_msg = 'Ошибка в конфиг файле: '
 
-    @staticmethod
-    def load():
+    def load(self):
         ''' считываем конфиг из json-файла '''
-        fname = 'sensor_monitoring_config/monitoring.json'
-        sname = 'sensor_monitoring_config/monitoring.schema.json'
+        fname = os.path.join(self.conf_path, 'monitoring.json')
+        sname = os.path.join(self.conf_path, 'monitoring.schema.json')
         loaded_config = None
         try:
             with open(fname, 'r') as f:
@@ -63,7 +63,8 @@ class MonitoringConfig:
             print(MonitoringConfig.config_err_msg, 'KeyError', e)
         return None
 
-    def __init__(self):
+    def __init__(self, conf_path=''):
+        self.conf_path = conf_path or 'sensor_monitoring_config'
         self.config = self.load()
         self.sensors = []
         self.sensors_names = []

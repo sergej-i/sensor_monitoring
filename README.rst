@@ -15,7 +15,7 @@ Kubuntu 20LTS
 cd <project_dir>
 python3 -m venv .env
 source .env/bin/activate
-pip install git+git://github.com/sergej-i/sensor_monitoring
+pip install git+git://github.com/sergej-i/sensor_monitoring --no-cache-dir
 ```
 
 **Run**:
